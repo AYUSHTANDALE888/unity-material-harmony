@@ -15,6 +15,8 @@ import { Route as AuditRouteImport } from './routes/audit'
 import { Route as ClassificationRouteImport } from './routes/classification'
 import { Route as DuplicatesRouteImport } from './routes/duplicates'
 import { Route as GovernanceRouteImport } from './routes/governance'
+import { Route as GraphRouteImport } from './routes/graph'
+import { Route as GraphTextRouteImport } from './routes/graph-text'
 import { Route as HarmonizeRouteImport } from './routes/harmonize'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as LoginRouteImport } from './routes/login'
@@ -54,6 +56,16 @@ const DuplicatesRoute = DuplicatesRouteImport.update({
 const GovernanceRoute = GovernanceRouteImport.update({
   id: '/governance',
   path: '/governance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GraphRoute = GraphRouteImport.update({
+  id: '/graph',
+  path: '/graph',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GraphTextRoute = GraphTextRouteImport.update({
+  id: '/graph-text',
+  path: '/graph-text',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HarmonizeRoute = HarmonizeRouteImport.update({
@@ -114,6 +126,8 @@ export interface FileRoutesByFullPath {
   '/classification': typeof ClassificationRoute
   '/duplicates': typeof DuplicatesRoute
   '/governance': typeof GovernanceRoute
+  '/graph': typeof GraphRoute
+  '/graph-text': typeof GraphTextRoute
   '/harmonize': typeof HarmonizeRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
@@ -132,6 +146,8 @@ export interface FileRoutesByTo {
   '/classification': typeof ClassificationRoute
   '/duplicates': typeof DuplicatesRoute
   '/governance': typeof GovernanceRoute
+  '/graph': typeof GraphRoute
+  '/graph-text': typeof GraphTextRoute
   '/harmonize': typeof HarmonizeRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
@@ -151,6 +167,8 @@ export interface FileRoutesById {
   '/classification': typeof ClassificationRoute
   '/duplicates': typeof DuplicatesRoute
   '/governance': typeof GovernanceRoute
+  '/graph': typeof GraphRoute
+  '/graph-text': typeof GraphTextRoute
   '/harmonize': typeof HarmonizeRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
@@ -171,6 +189,8 @@ export interface FileRouteTypes {
     | '/classification'
     | '/duplicates'
     | '/governance'
+    | '/graph'
+    | '/graph-text'
     | '/harmonize'
     | '/integrations'
     | '/login'
@@ -189,6 +209,8 @@ export interface FileRouteTypes {
     | '/classification'
     | '/duplicates'
     | '/governance'
+    | '/graph'
+    | '/graph-text'
     | '/harmonize'
     | '/integrations'
     | '/login'
@@ -207,6 +229,8 @@ export interface FileRouteTypes {
     | '/classification'
     | '/duplicates'
     | '/governance'
+    | '/graph'
+    | '/graph-text'
     | '/harmonize'
     | '/integrations'
     | '/login'
@@ -226,6 +250,8 @@ export interface RootRouteChildren {
   ClassificationRoute: typeof ClassificationRoute
   DuplicatesRoute: typeof DuplicatesRoute
   GovernanceRoute: typeof GovernanceRoute
+  GraphRoute: typeof GraphRoute
+  GraphTextRoute: typeof GraphTextRoute
   HarmonizeRoute: typeof HarmonizeRoute
   IntegrationsRoute: typeof IntegrationsRoute
   LoginRoute: typeof LoginRoute
@@ -280,6 +306,20 @@ declare module '@tanstack/react-router' {
       path: '/governance'
       fullPath: '/governance'
       preLoaderRoute: typeof GovernanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/graph': {
+      id: '/graph'
+      path: '/graph'
+      fullPath: '/graph'
+      preLoaderRoute: typeof GraphRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/graph-text': {
+      id: '/graph-text'
+      path: '/graph-text'
+      fullPath: '/graph-text'
+      preLoaderRoute: typeof GraphTextRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/harmonize': {
@@ -362,6 +402,8 @@ const rootRouteChildren: RootRouteChildren = {
   ClassificationRoute: ClassificationRoute,
   DuplicatesRoute: DuplicatesRoute,
   GovernanceRoute: GovernanceRoute,
+  GraphRoute: GraphRoute,
+  GraphTextRoute: GraphTextRoute,
   HarmonizeRoute: HarmonizeRoute,
   IntegrationsRoute: IntegrationsRoute,
   LoginRoute: LoginRoute,

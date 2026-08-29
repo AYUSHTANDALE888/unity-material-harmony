@@ -14,6 +14,7 @@ import {
   LayoutDashboard,
   Link2,
   LogOut,
+  Network,
   PanelLeftClose,
   PanelLeftOpen,
   Plug,
@@ -50,6 +51,7 @@ import { relTime, StatusBadge } from "@/components/kit";
 const NAV = [
   { to: "/", label: "Overview", icon: LayoutDashboard, group: "Operations" },
   { to: "/materials", label: "Material Master", icon: Boxes, group: "Operations" },
+  { to: "/graph", label: "Knowledge Graph", icon: Network, group: "Harmonisation" },
   { to: "/harmonize", label: "Match & Harmonize", icon: GitCompareArrows, group: "Harmonisation" },
   { to: "/duplicates", label: "Duplicate Detection", icon: Copy, group: "Harmonisation" },
   { to: "/standardization", label: "Standardization", icon: BadgeCheck, group: "Harmonisation" },

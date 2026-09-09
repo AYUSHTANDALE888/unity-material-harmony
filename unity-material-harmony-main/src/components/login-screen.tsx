@@ -39,7 +39,7 @@ import {
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function LoginScreen({ redirect }: { redirect?: string | undefined }) {
+export function LoginScreen({ redirect }: { redirect?: string }) {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 

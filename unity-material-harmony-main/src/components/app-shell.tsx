@@ -14,7 +14,6 @@ import {
   LayoutDashboard,
   Link2,
   LogOut,
-  Network,
   PanelLeftClose,
   PanelLeftOpen,
   Plug,
@@ -46,12 +45,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { cn } from "@/lib/utils";
 import { CPSES, ROLES, USERS } from "@/data/dataset";
 import { useNumm } from "@/store/numm-store";
+import { useAuth } from "@/lib/auth";
 import { relTime, StatusBadge } from "@/components/kit";
 
 const NAV = [
   { to: "/", label: "Overview", icon: LayoutDashboard, group: "Operations" },
   { to: "/materials", label: "Material Master", icon: Boxes, group: "Operations" },
-  { to: "/graph", label: "Knowledge Graph", icon: Network, group: "Harmonisation" },
   { to: "/harmonize", label: "Match & Harmonize", icon: GitCompareArrows, group: "Harmonisation" },
   { to: "/duplicates", label: "Duplicate Detection", icon: Copy, group: "Harmonisation" },
   { to: "/standardization", label: "Standardization", icon: BadgeCheck, group: "Harmonisation" },
@@ -174,8 +173,13 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
 
 function TopHeader() {
   const { state, dispatch, metrics, sidebarCollapsed, toggleSidebar } = useNumm();
+  const { session, signOut } = useAuth();
+  const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
+  const displayName = session?.user.name ?? state.user.name;
+  const displayRole = session?.user.role ?? state.user.role;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -256,22 +260,25 @@ function TopHeader() {
             aria-label="User menu"
           >
             <span className="flex size-8 items-center justify-center rounded-full bg-white/15 text-xs font-semibold">
-              {state.user.name
+              {displayName
                 .split(" ")
                 .map((p) => p[0])
                 .join("")}
             </span>
             <span className="hidden min-w-0 sm:block">
-              <span className="block truncate text-xs font-semibold leading-tight">{state.user.name}</span>
-              <span className="block truncate text-[11px] leading-tight text-header-foreground/65">{state.user.role}</span>
+              <span className="block truncate text-xs font-semibold leading-tight">{displayName}</span>
+              <span className="block truncate text-[11px] leading-tight text-header-foreground/65">{displayRole}</span>
             </span>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-72">
           <DropdownMenuLabel>
-            <span className="block text-sm">{state.user.name}</span>
+            <span className="block text-sm">{displayName}</span>
             <span className="block text-xs font-normal text-muted-foreground">
-              EMP-40218 · Session started {relTime(new Date(Date.now() - 3_600_000).toISOString())}
+              {session?.user.employeeId ?? "EMP-40218"} · {session?.user.organisation ?? "NUMM Programme Office"}
+            </span>
+            <span className="block text-xs font-normal text-muted-foreground">
+              {session ? `${session.method === "sso" ? "CPSE SSO" : "Password"} session ${session.sessionId} · started ${relTime(session.loginAt)}` : `Session started ${relTime(new Date(Date.now() - 3_600_000).toISOString())}`}
             </span>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -309,17 +316,38 @@ function TopHeader() {
             </DropdownMenuItem>
           ))}
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() =>
-              toast.info("Sign-out is disabled in the prototype environment", {
-                description: "Authentication is simulated for the demonstration session.",
-              })
-            }
-          >
+          <DropdownMenuItem onClick={() => setSignOutOpen(true)}>
             <LogOut className="size-3.5" /> Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <Dialog open={signOutOpen} onOpenChange={setSignOutOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Sign out of NUMM?</DialogTitle>
+            <DialogDescription>
+              Your session will be closed and unsaved filters on this workspace will be cleared. You will need to
+              authenticate again to reopen the material master.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setSignOutOpen(false)}>
+              Stay signed in
+            </Button>
+            <Button
+              onClick={() => {
+                setSignOutOpen(false);
+                signOut();
+                toast.success("Signed out", { description: "Session closed for this device." });
+                navigate({ to: "/login", replace: true });
+              }}
+            >
+              Sign out
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
       <HelpDialog open={helpOpen} onOpenChange={setHelpOpen} />

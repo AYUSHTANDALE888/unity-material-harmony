@@ -2,9 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LoginScreen } from "@/components/login-screen";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search["redirect"] === "string" ? (search["redirect"] as string) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } =>
+    typeof search["redirect"] === "string" ? { redirect: search["redirect"] } : {},
   head: () => ({
     meta: [
       { title: "Sign in — NUMM National Unified Material Master" },
@@ -26,5 +25,5 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const { redirect } = Route.useSearch();
-  return <LoginScreen redirect={redirect} />;
+  return <LoginScreen {...(redirect ? { redirect } : {})} />;
 }
